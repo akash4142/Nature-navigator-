@@ -39,6 +39,7 @@ export function WeddingBookingForm() {
   const [venueLng, setVenueLng] = useState<number | null>(null);
   
   const [guestCount, setGuestCount] = useState(1);
+  const [guestInput, setGuestInput] = useState("1");
   const [luggageCount, setLuggageCount] = useState(0);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [hours, setHours] = useState(4); // Default 4 hours
@@ -223,10 +224,18 @@ export function WeddingBookingForm() {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                value={guestCount}
+                value={guestInput}
                 onChange={(e) => {
-                  const val = Math.max(1, parseInt(e.target.value) || 1);
-                  handleGuestCountChange(val);
+                  const raw = e.target.value.replace(/[^0-9]/g, "");
+                  setGuestInput(raw);
+                  const num = parseInt(raw);
+                  if (num >= 1) handleGuestCountChange(num);
+                }}
+                onBlur={() => {
+                  const num = parseInt(guestInput);
+                  const valid = num >= 1 ? num : 1;
+                  setGuestInput(String(valid));
+                  handleGuestCountChange(valid);
                 }}
                 className="flex-1 h-10 px-3 text-center font-medium bg-transparent border-none outline-none"
               />

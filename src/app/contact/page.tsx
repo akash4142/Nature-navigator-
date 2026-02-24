@@ -62,6 +62,7 @@ function BookingForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [passengers, setPassengers] = useState<number>(1);
+  const [passengerInput, setPassengerInput] = useState("1");
   const [selectedVehicle, setSelectedVehicle] = useState<string>("");
   
   // Location state - Calgary Airport as default with coordinates
@@ -335,11 +336,22 @@ function BookingForm() {
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={passengers}
+              value={passengerInput}
               onChange={(e) => {
-                const newCount = Math.max(1, parseInt(e.target.value) || 1);
-                setPassengers(newCount);
-                setSelectedVehicle(getRecommendedVehicle(newCount));
+                const raw = e.target.value.replace(/[^0-9]/g, "");
+                setPassengerInput(raw);
+                const num = parseInt(raw);
+                if (num >= 1) {
+                  setPassengers(num);
+                  setSelectedVehicle(getRecommendedVehicle(num));
+                }
+              }}
+              onBlur={() => {
+                const num = parseInt(passengerInput);
+                const valid = num >= 1 ? num : 1;
+                setPassengers(valid);
+                setPassengerInput(String(valid));
+                setSelectedVehicle(getRecommendedVehicle(valid));
               }}
               className="flex-1 h-10 px-3 text-center font-medium bg-transparent border-none outline-none"
             />

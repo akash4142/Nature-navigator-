@@ -34,6 +34,7 @@ export function EngagementBookingForm() {
   const [venueLng, setVenueLng] = useState<number | null>(null);
   
   const [guestCount, setGuestCount] = useState(1);
+  const [guestInput, setGuestInput] = useState("1");
   const [luggageCount, setLuggageCount] = useState(0);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [hours, setHours] = useState(2); // Min 2 hours
@@ -188,8 +189,19 @@ export function EngagementBookingForm() {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                value={guestCount}
-                onChange={(e) => setGuestCount(Math.max(1, parseInt(e.target.value) || 1))}
+                value={guestInput}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^0-9]/g, "");
+                  setGuestInput(raw);
+                  const num = parseInt(raw);
+                  if (num >= 1) setGuestCount(num);
+                }}
+                onBlur={() => {
+                  const num = parseInt(guestInput);
+                  const valid = num >= 1 ? num : 1;
+                  setGuestInput(String(valid));
+                  setGuestCount(valid);
+                }}
                 className="flex-1 h-10 px-3 text-center font-medium bg-transparent border-none outline-none"
               />
             </div>
