@@ -535,25 +535,73 @@ const faqData = [
     value: "item-1",
     question: "How far in advance should I book?",
     answer:
-      "We recommend booking at least 48 hours in advance, especially during peak season (June-September) and for holidays. For last-minute requests, please call us directly.",
+      "We recommend booking as early as possible, especially for summer weddings in Canmore, Banff, and the Bow Valley. Peak dates fill up quickly. A 30% non-refundable deposit is required to secure your reservation.",
   },
   {
     value: "item-2",
-    question: "What's included in the service?",
+    question: "What's included in the wedding transportation service?",
     answer:
-      "All our services include a professional, vetted chauffeur, a meticulously cleaned premium vehicle, complimentary bottled water, and fuel. Airport transfers also include flight tracking and complimentary wait time.",
+      "Our wedding transportation service includes: a professional, licensed chauffeur; a clean and well-maintained SUV or passenger van; scheduled pickups and drop-offs based on your itinerary; 15 minutes complimentary waiting time; and coordination support prior to your event.",
   },
   {
     value: "item-3",
     question: "What is your cancellation policy?",
     answer:
-      "We offer free cancellation up to 24 hours before your scheduled pickup time. Cancellations within 24 hours may be subject to a fee. Please refer to your booking confirmation for full details.",
+      "All deposits are non-refundable. If cancellation occurs more than two (2) months before the event, only the deposit is retained. Any payments made within two (2) months of the event date are non-refundable.",
   },
   {
     value: "item-4",
+    question: "What happens if there is a no-show?",
+    answer:
+      "Failure to appear at the scheduled pickup time and location will be considered a no-show, and full charges will apply with no exceptions.",
+  },
+  {
+    value: "item-5",
+    question: "Can I make changes to my booking?",
+    answer:
+      "Yes. Complimentary booking changes can be made by email at least 24 hours in advance, or by phone at least 8 hours prior to pickup. All changes are subject to availability. Vehicle downgrades are not permitted within 72 hours of service.",
+  },
+  {
+    value: "item-6",
+    question: "Are additional stops allowed?",
+    answer:
+      "Yes. Additional stops beyond the agreed itinerary will be charged a minimum of 30 minutes at the hourly vehicle rate per stop, excluding short washroom breaks.",
+  },
+  {
+    value: "item-7",
+    question: "Is waiting time charged?",
+    answer:
+      "The first 15 minutes from the scheduled pickup time is complimentary. After that, waiting time may be charged at the vehicle's hourly rate.",
+  },
+  {
+    value: "item-8",
     question: "Do you provide child seats?",
     answer:
-      "Yes, we can provide complimentary child seats (infant, toddler, and booster) upon request. Please specify your needs when making your reservation.",
+      "Yes, child seats are available upon request. Please inform us in advance so we can properly arrange them.",
+  },
+  {
+    value: "item-9",
+    question: "Is smoking or vaping allowed in the vehicle?",
+    answer:
+      "No. Smoking or vaping is strictly prohibited. A $1,000 violation fee may apply, and services may be terminated immediately without refund.",
+  },
+  {
+    value: "item-10",
+    question: "What happens if the vehicle is left in poor condition?",
+    answer:
+      "A cleaning fee may apply. Bodily fluid cleanup will result in a charge ranging from $300 to $1,000, depending on severity.",
+  },
+  {
+    value: "item-11",
+    question: "What if there are delays due to weather or road conditions?",
+    answer:
+      "We are not liable for delays caused by mechanical issues, unsafe road conditions, weather events, road closures, accidents, or circumstances beyond our control.",
+  },
+  {
+    value: "item-12",
+    question: "Are you responsible for lost items?",
+    answer:
+      "No. We are not responsible for personal belongings left in the vehicle. Please double-check your items before exiting.",
   },
 ];
 
