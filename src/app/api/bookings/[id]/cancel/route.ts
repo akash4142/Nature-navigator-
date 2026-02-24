@@ -26,9 +26,9 @@ export async function PUT(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    if (booking.status !== "Pending") {
+    if (booking.status !== "Pending" && booking.status !== "Approved") {
       return NextResponse.json(
-        { error: "Cannot cancel a booking that is not pending" },
+        { error: "This booking cannot be cancelled at its current stage." },
         { status: 400 }
       );
     }

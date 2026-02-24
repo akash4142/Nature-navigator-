@@ -79,8 +79,12 @@ function ProfileContent() {
     }
   }
 
-  async function cancelBooking(id: string) {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+  async function cancelBooking(id: string, isPaid: boolean) {
+    const message = isPaid
+      ? "Are you sure you want to cancel this booking?\n\n⚠️ Your 30% deposit is non-refundable. No refund will be issued."
+      : "Are you sure you want to cancel this booking?";
+
+    if (!confirm(message)) return;
 
     try {
       const res = await fetch(`/api/bookings/${id}/cancel`, {
@@ -281,22 +285,29 @@ function ProfileContent() {
                 </div>
               </div>
 
-              {activeBooking.status === "Pending" && (
+              {(activeBooking.status === "Pending" || activeBooking.status === "Approved") && (
                 <div className="pt-4 flex justify-end gap-3">
-                  <Button
-                    onClick={() => handleContinuePayment(activeBooking.id)}
-                    disabled={isLoadingPayment}
-                    className="bg-accent text-accent-foreground hover:opacity-90"
-                  >
-                    {isLoadingPayment ? "Creating session..." : "Continue to Payment"}
-                  </Button>
+                  {activeBooking.status === "Pending" && (
+                    <Button
+                      onClick={() => handleContinuePayment(activeBooking.id)}
+                      disabled={isLoadingPayment}
+                      className="bg-accent text-accent-foreground hover:opacity-90"
+                    >
+                      {isLoadingPayment ? "Creating session..." : "Continue to Payment"}
+                    </Button>
+                  )}
                   <Button
                     variant="destructive"
-                    onClick={() => cancelBooking(activeBooking.id)}
+                    onClick={() => cancelBooking(activeBooking.id, activeBooking.payment50)}
                     disabled={isLoadingPayment}
                   >
                     Cancel Booking
                   </Button>
+                  {activeBooking.status === "Approved" && (
+                    <p className="text-xs text-muted-foreground self-center">
+                      ⚠️ 30% deposit is non-refundable
+                    </p>
+                  )}
                 </div>
               )}
 
