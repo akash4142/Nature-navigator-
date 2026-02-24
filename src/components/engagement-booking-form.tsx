@@ -9,8 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { calculateEngagementPrice, ENGAGEMENT_SERVICE } from "@/lib/pricing";
-import { Card } from "@/components/ui/card";
 import { PlacesAutocomplete } from "@/components/PlacesAutocomplete";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 
@@ -38,23 +36,16 @@ export function EngagementBookingForm() {
   const [guestCount, setGuestCount] = useState(1);
   const [luggageCount, setLuggageCount] = useState(0);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [hours, setHours] = useState(3); // Min 3 hours
+  const [hours, setHours] = useState(2); // Min 2 hours
   const [notes, setNotes] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
 
   // Auto-select vehicle based on guest count
   useEffect(() => {
-    if (guestCount <= 7) {
-      setSelectedVehicle("Luxury SUV (5 Passengers)");
-    } else {
-      setSelectedVehicle("Transit Van (14 Passengers)");
-    }
+    setSelectedVehicle("Transit Van (14 Passengers)");
   }, [guestCount]);
 
-  // Calculate pricing
-  const pricing = selectedVehicle
-    ? calculateEngagementPrice(selectedVehicle, hours)
-    : null;
+  // No pricing calc needed — price is not shown on this form
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -193,23 +184,14 @@ export function EngagementBookingForm() {
                   <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
               </div>
-              <button
-                type="button"
-                onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
-                className="flex items-center justify-center w-12 h-10 hover:bg-muted transition-colors"
-              >
-                <span className="text-xl font-semibold">−</span>
-              </button>
-              <div className="flex-1 flex items-center justify-center h-10 text-center font-medium">
-                {guestCount}
-              </div>
-              <button
-                type="button"
-                onClick={() => setGuestCount(Math.min(14, guestCount + 1))}
-                className="flex items-center justify-center w-12 h-10 hover:bg-muted transition-colors"
-              >
-                <span className="text-xl font-semibold">+</span>
-              </button>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={guestCount}
+                onChange={(e) => setGuestCount(Math.max(1, parseInt(e.target.value) || 1))}
+                className="flex-1 h-10 px-3 text-center font-medium bg-transparent border-none outline-none"
+              />
             </div>
           </div>
 
@@ -275,13 +257,13 @@ export function EngagementBookingForm() {
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-accent">Duration</h3>
         <div className="space-y-2">
-          <Label>Service Hours (Minimum 3 hours)</Label>
+          <Label>Service Hours (Minimum 2 hours)</Label>
           <div className="flex items-center gap-4">
             <Button
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => setHours(Math.max(ENGAGEMENT_SERVICE.minHours, hours - 1))}
+              onClick={() => setHours(Math.max(2, hours - 1))}
             >
               -
             </Button>
@@ -310,40 +292,7 @@ export function EngagementBookingForm() {
         />
       </div>
 
-      {/* Price Summary */}
-      {pricing && (
-        <Card className="p-6 bg-accent/5 border-accent/20">
-          <h3 className="text-lg font-semibold mb-4">Price Summary</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Service Hours</span>
-              <span>{pricing.hoursBooked} hours</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Rate: ${pricing.hourlyRate}/hour</span>
-              <span></span>
-            </div>
-            <div className="border-t border-accent/20 pt-2 mt-2"></div>
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>${pricing.subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>GST (5%)</span>
-              <span>${pricing.gst.toFixed(2)}</span>
-            </div>
-            <div className="border-t border-accent/20 pt-2 mt-2"></div>
-            <div className="flex justify-between font-bold text-base">
-              <span>Total</span>
-              <span>${pricing.total.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-accent font-semibold">
-              <span>Deposit (30%)</span>
-              <span>${(pricing.total * 0.3).toFixed(2)}</span>
-            </div>
-          </div>
-        </Card>
-      )}
+
 
       {/* Terms & Conditions */}
       <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/30 border border-border">

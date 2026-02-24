@@ -31,10 +31,10 @@ export const WEDDING_SHUTTLE = {
   defaultEndTime: '02:00',   // 2:00 AM
 } as const;
 
-// NEW: Ceremony Pick-Up - Min 3 hours, Min $650
+// NEW: Ceremony Pick-Up - Min 2 hours
 export const ENGAGEMENT_SERVICE = {
-  minPrice: 650,
-  minHours: 3,
+  minPrice: 450,
+  minHours: 2,
   hourlyRates: {
     'Luxury SUV (5 Passengers)': 163,
     'Transit Van (14 Passengers)': 213,

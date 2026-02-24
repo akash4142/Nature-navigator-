@@ -142,6 +142,8 @@ export interface BookingDetails {
   totalPrice: number;
   depositAmount: number;
   bookingType?: string;
+  passengers?: number;
+  notes?: string;
 }
 
 /**
@@ -149,6 +151,8 @@ export interface BookingDetails {
  * @param email - User's email address
  * @param booking - Booking details
  */
+const ADMIN_EMAIL = "info@naturenavigatorshuttle.ca";
+
 export async function sendBookingConfirmationEmail(
   email: string,
   customerName: string,
@@ -390,6 +394,83 @@ export async function sendBookingConfirmationEmail(
       `,
     });
     console.log(`✅ Booking confirmation email sent to ${email}`);
+
+    // Send admin notification email
+    const formattedDateAdmin = new Date(booking.date).toLocaleDateString('en-CA', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const adminBookingTypeLabel = 
+      booking.bookingType === 'WEDDING_SHUTTLE' ? 'Wedding Shuttle Service' :
+      booking.bookingType === 'ENGAGEMENT' ? 'Ceremony Pick-Up' :
+      booking.bookingType === 'CEREMONY_HOTEL_VISTA' ? 'Wedding Venue at Vista' :
+      booking.bookingType === 'AIRPORT_TRANSFER' ? 'Airport Transfer' :
+      booking.bookingType || 'Unknown';
+
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: `🔔 New Booking Confirmed – ${adminBookingTypeLabel}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>
+              body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
+              .container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+              .header-badge { display: inline-block; background: #D4AF37; color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+              .section { background: #f9f9f9; border-left: 4px solid #D4AF37; padding: 20px; margin: 20px 0; border-radius: 4px; }
+              .section h3 { margin-top: 0; color: #333; font-size: 15px; }
+              .row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+              .row:last-child { border-bottom: none; }
+              .label { font-weight: 600; color: #666; }
+              .value { color: #333; text-align: right; }
+              .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; color: #999; font-size: 12px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <span class="header-badge">🔔 New Booking Confirmed</span>
+              <h2 style="margin: 0 0 5px 0; color: #D4AF37;">${adminBookingTypeLabel}</h2>
+              <p style="margin: 0 0 20px 0; color: #666;">A new booking has been confirmed and the deposit has been paid.</p>
+
+              <div class="section">
+                <h3>👤 Customer Details</h3>
+                <div class="row"><span class="label">Name:</span><span class="value">${customerName || 'N/A'}</span></div>
+                <div class="row"><span class="label">Email:</span><span class="value">${email}</span></div>
+              </div>
+
+              <div class="section">
+                <h3>📋 Booking Details</h3>
+                <div class="row"><span class="label">Booking ID:</span><span class="value">${booking.id}</span></div>
+                <div class="row"><span class="label">Service Type:</span><span class="value">${adminBookingTypeLabel}</span></div>
+                <div class="row"><span class="label">Service Date:</span><span class="value">${formattedDateAdmin}</span></div>
+                <div class="row"><span class="label">Vehicle:</span><span class="value">${booking.car}</span></div>
+                ${booking.passengers ? `<div class="row"><span class="label">Passengers:</span><span class="value">${booking.passengers}</span></div>` : ''}
+                <div class="row"><span class="label">Pickup / Venue:</span><span class="value">${booking.pickup}</span></div>
+                ${booking.drop && booking.drop !== booking.pickup ? `<div class="row"><span class="label">Drop-off:</span><span class="value">${booking.drop}</span></div>` : ''}
+                ${booking.notes ? `<div class="row"><span class="label">Notes:</span><span class="value">${booking.notes}</span></div>` : ''}
+              </div>
+
+              <div class="section" style="background: #e8f5e9; border-color: #4caf50;">
+                <h3 style="color: #2e7d32;">💰 Payment Summary</h3>
+                <div class="row"><span class="label">Total Price:</span><span class="value"><strong>$${booking.totalPrice.toFixed(2)} CAD</strong></span></div>
+                <div class="row" style="color: #4caf50;"><span class="label">✓ Deposit Paid (30%):</span><span class="value"><strong>$${booking.depositAmount.toFixed(2)} CAD</strong></span></div>
+                <div class="row"><span class="label">Remaining Balance (70%):</span><span class="value">$${(booking.totalPrice - booking.depositAmount).toFixed(2)} CAD</span></div>
+              </div>
+
+              <div class="footer">
+                <p>Nature Navigator Shuttle Services Ltd. | Admin Notification</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+    console.log(`✅ Admin notification email sent to ${ADMIN_EMAIL}`);
+
   } catch (error) {
     console.error("Failed to send booking confirmation email:", error);
     // Don't throw - we don't want to fail the webhook if email fails

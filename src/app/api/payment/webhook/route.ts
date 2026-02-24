@@ -97,6 +97,8 @@ export async function POST(req: Request) {
                     totalPrice: existingBooking.totalPrice || 0,
                     depositAmount: existingBooking.depositAmount || 0,
                     bookingType: existingBooking.bookingType,
+                    passengers: existingBooking.passengerCount ?? undefined,
+                    notes: existingBooking.notes ?? undefined,
                   }
                 );
                 console.log("📧 Confirmation email sent to:", user.email);

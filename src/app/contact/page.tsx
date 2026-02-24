@@ -31,7 +31,6 @@ import {
 } from "@/components/ui/select";
 import { WeddingBookingForm } from "@/components/wedding-booking-form";
 import { EngagementBookingForm } from "@/components/engagement-booking-form";
-import { CeremonyBookingForm } from "@/components/ceremony-booking-form";
 import { PlacesAutocomplete } from "@/components/PlacesAutocomplete";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 
@@ -332,31 +331,18 @@ function BookingForm() {
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
               </svg>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                const newCount = Math.max(1, passengers - 1);
+            <input
+              type="number"
+              min={1}
+              max={100}
+              value={passengers}
+              onChange={(e) => {
+                const newCount = Math.max(1, parseInt(e.target.value) || 1);
                 setPassengers(newCount);
                 setSelectedVehicle(getRecommendedVehicle(newCount));
               }}
-              className="flex items-center justify-center w-12 h-10 hover:bg-muted transition-colors"
-            >
-              <span className="text-xl font-semibold">−</span>
-            </button>
-            <div className="flex-1 flex items-center justify-center h-10 text-center font-medium">
-              {passengers}
-            </div>
-            <button
-              type="button"
-              onClick={() => {
-                const newCount = Math.min(20, passengers + 1);
-                setPassengers(newCount);
-                setSelectedVehicle(getRecommendedVehicle(newCount));
-              }}
-              className="flex items-center justify-center w-12 h-10 hover:bg-muted transition-colors"
-            >
-              <span className="text-xl font-semibold">+</span>
-            </button>
+              className="flex-1 h-10 px-3 text-center font-medium bg-transparent border-none outline-none"
+            />
           </div>
           {selectedVehicle && (
             <p className="text-xs text-accent font-medium">
@@ -642,7 +628,7 @@ GSAPAccordionContent.displayName = "GSAPAccordionContent";
 
 const ContactPage = () => {
   const mainRef = useRef<HTMLDivElement>(null);
-  const [bookingType, setBookingType] = useState<'airport' | 'wedding' | 'engagement' | 'ceremony'>('airport');
+  const [bookingType, setBookingType] = useState<'airport' | 'wedding' | 'engagement'>('airport');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -694,7 +680,7 @@ const ContactPage = () => {
             </Label>
             <Select 
               value={bookingType} 
-              onValueChange={(value: 'airport' | 'wedding' | 'engagement' | 'ceremony') => setBookingType(value)}
+              onValueChange={(value: 'airport' | 'wedding' | 'engagement') => setBookingType(value)}
             >
               <SelectTrigger className="h-12">
                 <SelectValue />
@@ -726,13 +712,7 @@ const ContactPage = () => {
                 <SelectItem value="engagement">
                   <div className="flex flex-col">
                     <span className="font-semibold">Ceremony Pick-Up</span>
-                    <span className="text-xs text-muted-foreground">3-hour service from $650</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="ceremony">
-                  <div className="flex flex-col">
-                    <span className="font-semibold">Wedding Venue at Vista</span>
-                    <span className="text-xs text-muted-foreground">2-hour service from $450</span>
+                    <span className="text-xs text-muted-foreground">Min. 2 hours</span>
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -745,13 +725,11 @@ const ContactPage = () => {
               {bookingType === 'airport' && 'Airport Transfer Details'}
               {bookingType === 'wedding' && 'Wedding Shuttle Booking'}
               {bookingType === 'engagement' && 'Ceremony Pick-Up Booking'}
-              {bookingType === 'ceremony' && 'Wedding Venue at Vista Booking'}
             </h2>
             
             {bookingType === 'airport' && <BookingForm />}
             {bookingType === 'wedding' && <WeddingBookingForm />}
             {bookingType === 'engagement' && <EngagementBookingForm />}
-            {bookingType === 'ceremony' && <CeremonyBookingForm />}
           </div>
 
           <div className="space-y-8 contact-animate">

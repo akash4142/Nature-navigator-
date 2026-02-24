@@ -195,11 +195,11 @@ const Home = () => {
               <ul className="space-y-3 text-foreground/80">
                 <li className="flex items-start">
                   <span className="text-accent mr-2">✓</span>
-                  Ceremony Pick-Up - Starting from C$650 (Min 3 hrs)
+                  Ceremony Pick-Up (Min 2 hrs)
                 </li>
                 <li className="flex items-start">
                   <span className="text-accent mr-2">✓</span>
-                  Wedding Venue at Vista - Starting from C$450 (Min 2 hrs)
+                  Wedding Shuttle Service (Min 2 hrs)
                 </li>
                 <li className="flex items-start">
                   <span className="text-accent mr-2">✓</span>

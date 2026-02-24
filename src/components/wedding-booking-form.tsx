@@ -219,23 +219,17 @@ export function WeddingBookingForm() {
                   <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
               </div>
-              <button
-                type="button"
-                onClick={() => handleGuestCountChange(Math.max(1, guestCount - 1))}
-                className="flex items-center justify-center w-12 h-10 hover:bg-muted transition-colors"
-              >
-                <span className="text-xl font-semibold">−</span>
-              </button>
-              <div className="flex-1 flex items-center justify-center h-10 text-center font-medium">
-                {guestCount}
-              </div>
-              <button
-                type="button"
-                onClick={() => handleGuestCountChange(Math.min(20, guestCount + 1))}
-                className="flex items-center justify-center w-12 h-10 hover:bg-muted transition-colors"
-              >
-                <span className="text-xl font-semibold">+</span>
-              </button>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={guestCount}
+                onChange={(e) => {
+                  const val = Math.max(1, parseInt(e.target.value) || 1);
+                  handleGuestCountChange(val);
+                }}
+                className="flex-1 h-10 px-3 text-center font-medium bg-transparent border-none outline-none"
+              />
             </div>
           </div>
 
