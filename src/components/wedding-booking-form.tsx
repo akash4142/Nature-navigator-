@@ -220,9 +220,9 @@ export function WeddingBookingForm() {
                 </svg>
               </div>
               <input
-                type="number"
-                min={1}
-                max={100}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={guestCount}
                 onChange={(e) => {
                   const val = Math.max(1, parseInt(e.target.value) || 1);

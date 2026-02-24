@@ -195,9 +195,9 @@ export function CeremonyBookingForm() {
                 </svg>
               </div>
               <input
-                type="number"
-                min={1}
-                max={100}
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={guestCount}
                 onChange={(e) => setGuestCount(Math.max(1, parseInt(e.target.value) || 1))}
                 className="flex-1 h-10 px-3 text-center font-medium bg-transparent border-none outline-none"

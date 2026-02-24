@@ -332,9 +332,9 @@ function BookingForm() {
               </svg>
             </div>
             <input
-              type="number"
-              min={1}
-              max={100}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={passengers}
               onChange={(e) => {
                 const newCount = Math.max(1, parseInt(e.target.value) || 1);
