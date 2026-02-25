@@ -42,7 +42,9 @@ export function WeddingBookingForm() {
   const [guestInput, setGuestInput] = useState("1");
   const [luggageCount, setLuggageCount] = useState(0);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [hours, setHours] = useState(4); // Default 4 hours
+  const BASE_HOURS = 4; // Fixed minimum
+  const [addonHours, setAddonHours] = useState(0); // Additional hours on top
+  const totalHours = BASE_HOURS + addonHours;
   const [notes, setNotes] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
 
@@ -57,9 +59,9 @@ export function WeddingBookingForm() {
     }
   }
 
-  // Calculate pricing
+  // Calculate pricing on total hours (base + add-ons)
   const pricing = selectedVehicle
-    ? calculateWeddingPrice(selectedVehicle, hours)
+    ? calculateWeddingPrice(selectedVehicle, totalHours)
     : null;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -113,7 +115,7 @@ export function WeddingBookingForm() {
           notes,
           eventStartTime: bookingDate.toISOString(),
           eventEndTime: eventEnd.toISOString(),
-          additionalHours: hours, // Total service hours
+          additionalHours: totalHours, // Total service hours (base + add-ons)
         }),
       });
 
@@ -300,37 +302,41 @@ export function WeddingBookingForm() {
         </div>
       </div>
 
-      {/* Service Duration */}
+      {/* Add-On Services */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-accent">Duration</h3>
+        <h3 className="text-lg font-semibold text-accent">Add-On Services</h3>
         <p className="text-sm text-muted-foreground">
-          Select total service hours (minimum 2 hours required).
+          Base service is <strong>4 hours</strong>. Add extra hours below if needed.
         </p>
-        
-        {/* Service Hours */}
+
         <div className="space-y-2">
-          <Label>Service Hours (Minimum 2 hours)</Label>
+          <Label>Additional Hours</Label>
           <div className="flex items-center gap-4">
             <Button
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => setHours(Math.max(2, hours - 1))}
-              disabled={hours <= 2}
+              onClick={() => setAddonHours(Math.max(0, addonHours - 1))}
+              disabled={addonHours === 0}
             >
               -
             </Button>
-            <span className="text-2xl font-bold w-16 text-center">{hours}</span>
+            <span className="text-2xl font-bold w-16 text-center">{addonHours}</span>
             <Button
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => setHours(hours + 1)}
+              onClick={() => setAddonHours(addonHours + 1)}
             >
               +
             </Button>
-            <span className="text-muted-foreground">hours</span>
+            <span className="text-muted-foreground">extra hour{addonHours !== 1 ? "s" : ""}</span>
           </div>
+          {addonHours > 0 && selectedVehicle && (
+            <p className="text-xs text-accent font-medium">
+              Total: {totalHours} hrs ({BASE_HOURS} base + {addonHours} add-on)
+            </p>
+          )}
           {selectedVehicle && (
             <p className="text-xs text-muted-foreground">
               Rate: ${WEDDING_SHUTTLE.hourlyRates[selectedVehicle as keyof typeof WEDDING_SHUTTLE.hourlyRates]}/hour
@@ -356,9 +362,15 @@ export function WeddingBookingForm() {
           <h3 className="text-lg font-semibold mb-4">Price Summary</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>Service ({hours} hours @ ${pricing.hourlyRate}/hr)</span>
-              <span>${pricing.basePrice.toFixed(2)}</span>
+              <span>Base Service (4 hrs @ ${pricing.hourlyRate}/hr)</span>
+              <span>${(pricing.hourlyRate * BASE_HOURS).toFixed(2)}</span>
             </div>
+            {addonHours > 0 && (
+              <div className="flex justify-between text-accent">
+                <span>Add-On ({addonHours} hr{addonHours !== 1 ? "s" : ""} @ ${pricing.hourlyRate}/hr)</span>
+                <span>+${(pricing.hourlyRate * addonHours).toFixed(2)}</span>
+              </div>
+            )}
             <div className="border-t border-accent/20 pt-2 mt-2"></div>
             <div className="flex justify-between">
               <span>Subtotal</span>
