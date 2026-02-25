@@ -42,9 +42,7 @@ export function WeddingBookingForm() {
   const [guestInput, setGuestInput] = useState("1");
   const [luggageCount, setLuggageCount] = useState(0);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const BASE_HOURS = 4; // Fixed minimum
-  const [addonHours, setAddonHours] = useState(0); // Additional hours on top
-  const totalHours = BASE_HOURS + addonHours;
+  const [addonHours, setAddonHours] = useState(0); // Additional hours on top of scheduled time
   const [notes, setNotes] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
 
@@ -59,8 +57,21 @@ export function WeddingBookingForm() {
     }
   }
 
-  // Calculate pricing on total hours (base + add-ons)
-  const pricing = selectedVehicle
+  // Calculate scheduled hours from start and end time pickers (live)
+  function calcScheduledHours(start: string, end: string): number {
+    if (!start || !end) return 0;
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+    let startMins = sh * 60 + sm;
+    let endMins = eh * 60 + em;
+    if (endMins <= startMins) endMins += 24 * 60; // crosses midnight
+    return Math.round(((endMins - startMins) / 60) * 10) / 10; // round to 1 decimal
+  }
+  const scheduledHours = calcScheduledHours(eventStartTime, eventEndTime);
+  const totalHours = scheduledHours + addonHours;
+
+  // Calculate pricing on total hours (scheduled time + add-ons)
+  const pricing = selectedVehicle && totalHours > 0
     ? calculateWeddingPrice(selectedVehicle, totalHours)
     : null;
 
@@ -305,9 +316,15 @@ export function WeddingBookingForm() {
       {/* Add-On Services */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-accent">Add-On Services</h3>
-        <p className="text-sm text-muted-foreground">
-          Base service is <strong>4 hours</strong>. Add extra hours below if needed.
-        </p>
+        {scheduledHours > 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Scheduled service: <strong>{scheduledHours} hr{scheduledHours !== 1 ? "s" : ""}</strong> (from your selected times). Add extra hours below if needed.
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Select your event start and end times above to see the scheduled duration. Add extra hours below if needed.
+          </p>
+        )}
 
         <div className="space-y-2">
           <Label>Additional Hours</Label>
@@ -332,9 +349,9 @@ export function WeddingBookingForm() {
             </Button>
             <span className="text-muted-foreground">extra hour{addonHours !== 1 ? "s" : ""}</span>
           </div>
-          {addonHours > 0 && selectedVehicle && (
+          {addonHours > 0 && scheduledHours > 0 && (
             <p className="text-xs text-accent font-medium">
-              Total: {totalHours} hrs ({BASE_HOURS} base + {addonHours} add-on)
+              Total: {totalHours} hrs ({scheduledHours} scheduled + {addonHours} add-on)
             </p>
           )}
           {selectedVehicle && (
@@ -362,8 +379,8 @@ export function WeddingBookingForm() {
           <h3 className="text-lg font-semibold mb-4">Price Summary</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>Base Service (4 hrs @ ${pricing.hourlyRate}/hr)</span>
-              <span>${(pricing.hourlyRate * BASE_HOURS).toFixed(2)}</span>
+              <span>Scheduled Service ({scheduledHours} hr{scheduledHours !== 1 ? "s" : ""} @ ${pricing.hourlyRate}/hr)</span>
+              <span>${(pricing.hourlyRate * scheduledHours).toFixed(2)}</span>
             </div>
             {addonHours > 0 && (
               <div className="flex justify-between text-accent">
