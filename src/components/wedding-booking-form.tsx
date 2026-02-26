@@ -302,7 +302,7 @@ export function WeddingBookingForm() {
 
       {/* Duration */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-accent">Duration</h3>
+        <h3 className="text-lg font-semibold text-accent">Ceremony Pick-Up</h3>
         <div className="space-y-2">
           <Label>Service Hours (Minimum 2 hours)</Label>
           <div className="flex items-center gap-4">
