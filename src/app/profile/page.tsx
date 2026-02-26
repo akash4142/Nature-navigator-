@@ -285,8 +285,8 @@ function ProfileContent() {
                 </div>
               </div>
 
-              {(activeBooking.status === "Pending" || activeBooking.status === "Approved") && (
-                <div className="pt-4 flex justify-end gap-3">
+              {(activeBooking.status === "Pending" || activeBooking.status === "Approved" || activeBooking.status === "AwaitingFinalPayment") && (
+                <div className="pt-4 flex justify-end gap-3 flex-wrap">
                   {activeBooking.status === "Pending" && (
                     <Button
                       onClick={() => handleContinuePayment(activeBooking.id)}
@@ -296,6 +296,15 @@ function ProfileContent() {
                       {isLoadingPayment ? "Creating session..." : "Continue to Payment"}
                     </Button>
                   )}
+                  {activeBooking.status === "AwaitingFinalPayment" && activeBooking.finalPaymentUrl && (
+                    <Button
+                      size="default"
+                      className="bg-accent text-accent-foreground hover:opacity-90"
+                      onClick={() => window.location.href = activeBooking.finalPaymentUrl!}
+                    >
+                      Pay Remaining 70%
+                    </Button>
+                  )}
                   <Button
                     variant="destructive"
                     onClick={() => cancelBooking(activeBooking.id, activeBooking.payment50)}
@@ -303,25 +312,15 @@ function ProfileContent() {
                   >
                     Cancel Booking
                   </Button>
-                  {activeBooking.status === "Approved" && (
-                    <p className="text-xs text-muted-foreground self-center">
+                  {(activeBooking.status === "Approved" || activeBooking.status === "AwaitingFinalPayment") && (
+                    <p className="text-xs text-muted-foreground self-center w-full text-right">
                       ⚠️ 30% deposit is non-refundable
                     </p>
                   )}
                 </div>
               )}
 
-              {activeBooking.status === "AwaitingFinalPayment" && activeBooking.finalPaymentUrl && (
-                <div className="pt-4 flex justify-end">
-                  <Button
-                    size="lg"
-                    className="bg-accent text-accent-foreground hover:opacity-90"
-                    onClick={() => window.location.href = activeBooking.finalPaymentUrl!}
-                  >
-                    Pay Remaining 70%
-                  </Button>
-                </div>
-              )}
+
             </CardContent>
           </Card>
         ) : (
