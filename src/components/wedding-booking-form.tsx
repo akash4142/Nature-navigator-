@@ -42,7 +42,7 @@ export function WeddingBookingForm() {
   const [guestInput, setGuestInput] = useState("1");
   const [luggageCount, setLuggageCount] = useState(0);
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [addonHours, setAddonHours] = useState(0); // Additional hours on top of scheduled time
+  const [serviceHours, setServiceHours] = useState(2); // Minimum 2 hours
   const [notes, setNotes] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
 
@@ -57,22 +57,9 @@ export function WeddingBookingForm() {
     }
   }
 
-  // Calculate scheduled hours from start and end time pickers (live)
-  function calcScheduledHours(start: string, end: string): number {
-    if (!start || !end) return 0;
-    const [sh, sm] = start.split(":").map(Number);
-    const [eh, em] = end.split(":").map(Number);
-    let startMins = sh * 60 + sm;
-    let endMins = eh * 60 + em;
-    if (endMins <= startMins) endMins += 24 * 60; // crosses midnight
-    return Math.round(((endMins - startMins) / 60) * 10) / 10; // round to 1 decimal
-  }
-  const scheduledHours = calcScheduledHours(eventStartTime, eventEndTime);
-  const totalHours = scheduledHours + addonHours;
-
-  // Calculate pricing on total hours (scheduled time + add-ons)
-  const pricing = selectedVehicle && totalHours > 0
-    ? calculateWeddingPrice(selectedVehicle, totalHours)
+  // Calculate pricing based on selected service hours
+  const pricing = selectedVehicle && serviceHours > 0
+    ? calculateWeddingPrice(selectedVehicle, serviceHours)
     : null;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -126,7 +113,7 @@ export function WeddingBookingForm() {
           notes,
           eventStartTime: bookingDate.toISOString(),
           eventEndTime: eventEnd.toISOString(),
-          additionalHours: totalHours, // Total service hours (base + add-ons)
+          additionalHours: serviceHours,
         }),
       });
 
@@ -313,47 +300,32 @@ export function WeddingBookingForm() {
         </div>
       </div>
 
-      {/* Add-On Services */}
+      {/* Duration */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-accent">Add-On Services</h3>
-        {scheduledHours > 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Scheduled service: <strong>{scheduledHours} hr{scheduledHours !== 1 ? "s" : ""}</strong> (from your selected times). Add extra hours below if needed.
-          </p>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Select your event start and end times above to see the scheduled duration. Add extra hours below if needed.
-          </p>
-        )}
-
+        <h3 className="text-lg font-semibold text-accent">Duration</h3>
         <div className="space-y-2">
-          <Label>Additional Hours</Label>
+          <Label>Service Hours (Minimum 2 hours)</Label>
           <div className="flex items-center gap-4">
             <Button
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => setAddonHours(Math.max(0, addonHours - 1))}
-              disabled={addonHours === 0}
+              onClick={() => setServiceHours(Math.max(2, serviceHours - 1))}
+              disabled={serviceHours <= 2}
             >
               -
             </Button>
-            <span className="text-2xl font-bold w-16 text-center">{addonHours}</span>
+            <span className="text-2xl font-bold w-16 text-center">{serviceHours}</span>
             <Button
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => setAddonHours(addonHours + 1)}
+              onClick={() => setServiceHours(serviceHours + 1)}
             >
               +
             </Button>
-            <span className="text-muted-foreground">extra hour{addonHours !== 1 ? "s" : ""}</span>
+            <span className="text-muted-foreground">hours</span>
           </div>
-          {addonHours > 0 && scheduledHours > 0 && (
-            <p className="text-xs text-accent font-medium">
-              Total: {totalHours} hrs ({scheduledHours} scheduled + {addonHours} add-on)
-            </p>
-          )}
           {selectedVehicle && (
             <p className="text-xs text-muted-foreground">
               Rate: ${WEDDING_SHUTTLE.hourlyRates[selectedVehicle as keyof typeof WEDDING_SHUTTLE.hourlyRates]}/hour
@@ -379,15 +351,9 @@ export function WeddingBookingForm() {
           <h3 className="text-lg font-semibold mb-4">Price Summary</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>Scheduled Service ({scheduledHours} hr{scheduledHours !== 1 ? "s" : ""} @ ${pricing.hourlyRate}/hr)</span>
-              <span>${(pricing.hourlyRate * scheduledHours).toFixed(2)}</span>
+              <span>Service ({serviceHours} hr{serviceHours !== 1 ? "s" : ""} @ ${pricing.hourlyRate}/hr)</span>
+              <span>${pricing.basePrice.toFixed(2)}</span>
             </div>
-            {addonHours > 0 && (
-              <div className="flex justify-between text-accent">
-                <span>Add-On ({addonHours} hr{addonHours !== 1 ? "s" : ""} @ ${pricing.hourlyRate}/hr)</span>
-                <span>+${(pricing.hourlyRate * addonHours).toFixed(2)}</span>
-              </div>
-            )}
             <div className="border-t border-accent/20 pt-2 mt-2"></div>
             <div className="flex justify-between">
               <span>Subtotal</span>
