@@ -334,13 +334,13 @@ const ServicesPage = () => {
           </p>
         </div>
 
-        <div ref={servicesRef} className="grid lg:grid-cols-2 gap-12">
+        <div ref={servicesRef} className="grid lg:grid-cols-2 gap-12 lg:auto-rows-fr">
           {servicesData.map((service, index) => {
             const IconComponent = service.icon;
             return (
               <Card
                 key={index}
-                className="service-card rounded-xl shadow-xl border-0 transition-all duration-300 hover:shadow-2xl hover:translate-y-[-2px] bg-card overflow-hidden group 
+                className="service-card h-full rounded-xl shadow-xl border-0 transition-all duration-300 hover:shadow-2xl hover:translate-y-[-2px] bg-card overflow-hidden group 
                 
                 flex flex-col" // 💡 FIX: Make the card a Flex column
               >
