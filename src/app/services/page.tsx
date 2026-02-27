@@ -143,15 +143,7 @@ const servicesData: ServiceData[] = [
       {
         name: "Ceremony Pick-Up",
         details:
-          "Minimum 3 hours. Guest transfers for ceremonies and special events.",
-        price: "C$650 + GST (Min)",
-        hourly_suv: "C$163/Hr",
-        hourly_van: "C$213/Hr",
-      },
-      {
-        name: "Wedding Venue at Vista",
-        details:
-          "Minimum 2 hours. Guest transfers to/from Vista wedding venue, Canmore.",
+          "Minimum 2 hours. Guest transfers for ceremonies and special events.",
         price: "C$450 + GST (Min)",
         hourly_suv: "C$163/Hr",
         hourly_van: "C$213/Hr",
