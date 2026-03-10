@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = "Nature Navigator <onboarding@resend.dev>"; // Update with verified domain
+const FROM_EMAIL = "Nature Navigator <info@naturenavigator.ca>"; // Must match the domain verified on Resend
 const APP_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 /**
@@ -151,7 +151,7 @@ export interface BookingDetails {
  * @param email - User's email address
  * @param booking - Booking details
  */
-const ADMIN_EMAIL = "info@naturenavigatorshuttle.ca";
+const ADMIN_EMAIL = "info@naturenavigator.ca";
 
 export async function sendBookingConfirmationEmail(
   email: string,
@@ -386,7 +386,7 @@ export async function sendBookingConfirmationEmail(
                 <p style="margin: 5px 0;"><strong>Warm regards,</strong></p>
                 <p style="margin: 5px 0;" class="company-name">Nature Navigator Shuttle Services Ltd.</p>
                 <p style="margin: 5px 0;">Phone: <a href="tel:+14379904858" style="color: #D4AF37; text-decoration: none;">+1 (437) 990-4858</a></p>
-                <p style="margin: 5px 0;">Email: <a href="mailto:info@naturenavigatorshuttle.ca" style="color: #D4AF37; text-decoration: none;">info@naturenavigatorshuttle.ca</a></p>
+                <p style="margin: 5px 0;">Email: <a href="mailto:info@naturenavigator.ca" style="color: #D4AF37; text-decoration: none;">info@naturenavigator.ca</a></p>
               </div>
             </div>
           </body>
